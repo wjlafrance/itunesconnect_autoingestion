@@ -5,26 +5,38 @@ require 'cgi'
 
 def main
   autoingestor = Autoingestion.new
-  print "iTunes Connect email address:             "
-  autoingestor.username = gets.strip!
-  print "iTunes Connect password:                  "
-  autoingestor.password = gets.strip!
-  print "Vendor number:                            "
-  autoingestor.vendor_number = gets.strip!
-  print "Type of report:                [Sales]    "
-  autoingestor.type_of_report = gets.strip!
-  print "Date type:                     [Daily]    "
-  autoingestor.date_type = gets.strip!
-  print "Report type:                   [Summary]  "
-  autoingestor.report_type = gets.strip!
   yesterday = (Time.new - 24*60*60).strftime("%Y%m%d")
-  print "Report date:                   [#{yesterday}] "
-  autoingestor.report_date = gets.strip!
 
-  autoingestor.type_of_report = "Sales"   if autoingestor.type_of_report.empty?
-  autoingestor.date_type      = "Daily"   if autoingestor.date_type.empty?
-  autoingestor.report_type    = "Summary" if autoingestor.report_type.empty?
-  autoingestor.report_date    = yesterday if autoingestor.report_date.empty?
+  if File.exists?("config.hash")
+    config = eval(File.new("config.hash").read())
+    autoingestor.username = config["username"]
+    autoingestor.password = config["password"]
+    autoingestor.vendor_number = config["vendor_number"]
+    autoingestor.type_of_report = "Sales"
+    autoingestor.date_type = "Daily"
+    autoingestor.report_type = "Summary"
+    autoingestor.report_date = yesterday
+  else
+    print "iTunes Connect email address:             "
+    autoingestor.username = gets.strip!
+    print "iTunes Connect password:                  "
+    autoingestor.password = gets.strip!
+    print "Vendor number:                            "
+    autoingestor.vendor_number = gets.strip!
+    print "Type of report:                [Sales]    "
+    autoingestor.type_of_report = gets.strip!
+    print "Date type:                     [Daily]    "
+    autoingestor.date_type = gets.strip!
+    print "Report type:                   [Summary]  "
+    autoingestor.report_type = gets.strip!
+    print "Report date:                   [#{yesterday}] "
+    autoingestor.report_date = gets.strip!
+
+    autoingestor.type_of_report = "Sales"   if autoingestor.type_of_report.empty?
+    autoingestor.date_type      = "Daily"   if autoingestor.date_type.empty?
+    autoingestor.report_type    = "Summary" if autoingestor.report_type.empty?
+    autoingestor.report_date    = yesterday if autoingestor.report_date.empty?
+  end
 
   autoingestor.perform_request
 end
@@ -84,8 +96,13 @@ class Autoingestion
       system("gunzip #{filename}")
       system("mv #{filename}.bak #{filename}")
       
-    else
+    elsif response['errormsg'] != nil
       puts response['errormsg']
+    else
+      puts "No recognized response, dumping headers.."
+      response.each_header do | key, value |
+        puts "#{key}: #{value}"
+      end
     end
   end
 
