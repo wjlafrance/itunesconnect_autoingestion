@@ -1,4 +1,4 @@
-require 'net/http'
+require 'util/http_verify_none.rb'
 require 'net/https'
 require 'uri'
 require 'cgi'
@@ -12,10 +12,6 @@ def main
     autoingestor.username = config["username"]
     autoingestor.password = config["password"]
     autoingestor.vendor_number = config["vendor_number"]
-    autoingestor.type_of_report = "Sales"
-    autoingestor.date_type = "Daily"
-    autoingestor.report_type = "Summary"
-    autoingestor.report_date = yesterday
   else
     print "iTunes Connect email address:             "
     autoingestor.username = gets.strip!
@@ -31,12 +27,12 @@ def main
     autoingestor.report_type = gets.strip!
     print "Report date:                   [#{yesterday}] "
     autoingestor.report_date = gets.strip!
-
-    autoingestor.type_of_report = "Sales"   if autoingestor.type_of_report.empty?
-    autoingestor.date_type      = "Daily"   if autoingestor.date_type.empty?
-    autoingestor.report_type    = "Summary" if autoingestor.report_type.empty?
-    autoingestor.report_date    = yesterday if autoingestor.report_date.empty?
   end
+
+  autoingestor.type_of_report = "Sales"   if autoingestor.type_of_report.empty?
+  autoingestor.date_type      = "Daily"   if autoingestor.date_type.empty?
+  autoingestor.report_type    = "Summary" if autoingestor.report_type.empty?
+  autoingestor.report_date    = yesterday if autoingestor.report_date.empty?
 
   autoingestor.perform_request
 end
