@@ -17,12 +17,14 @@ def main
   autoingestor.date_type = gets.strip!
   print "Report type:                   [Summary]  "
   autoingestor.report_type = gets.strip!
-  print "Report date:                              "
+  yesterday = (Time.new - 24*60*60).strftime("%Y%m%d")
+  print "Report date:                   [#{yesterday}] "
   autoingestor.report_date = gets.strip!
 
-  autoingestor.type_of_report = "Sales" if autoingestor.type_of_report.empty?
-  autoingestor.date_type = "Daily" if autoingestor.date_type.empty?
-  autoingestor.report_type = "Summary" if autoingestor.report_type.empty?
+  autoingestor.type_of_report = "Sales"   if autoingestor.type_of_report.empty?
+  autoingestor.date_type      = "Daily"   if autoingestor.date_type.empty?
+  autoingestor.report_type    = "Summary" if autoingestor.report_type.empty?
+  autoingestor.report_date    = yesterday if autoingestor.report_date.empty?
 
   autoingestor.perform_request
 end
@@ -73,7 +75,6 @@ class Autoingestion
 
     if response['filename'] != nil
       filename = response['filename']
-      #puts "should write to #{response['filename']}"
       f = File.new(filename, "w")
       f.write(response.body)
       f.close
@@ -84,7 +85,7 @@ class Autoingestion
       system("mv #{filename}.bak #{filename}")
       
     else
-      puts response['errmsg']
+      puts response['errormsg']
     end
   end
 
