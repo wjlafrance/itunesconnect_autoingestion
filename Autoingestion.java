@@ -65,29 +65,29 @@ public class Autoingestion
             URL url = new URL("https://reportingitc.apple.com/autoingestion.tft?");
 
             connection = (HttpURLConnection)url.openConnection();
-      		connection.setRequestMethod("POST");
-      		connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-      		connection.setDoOutput(true);
+      	    connection.setRequestMethod("POST");
+      	    connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+      	    connection.setDoOutput(true);
       		
-      		OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
-      		out.write(data);
-      		out.flush();
-      		out.close();
+      	    OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream());
+            out.write(data);
+      	    out.flush();
+      	    out.close();
 
-      		if (connection.getHeaderField("ERRORMSG") != null) {
-        		System.out.println(connection.getHeaderField("ERRORMSG"));
-      		} else if (connection.getHeaderField("filename") != null) {
-        		getFile(connection);
-        	}
+      	    if (connection.getHeaderField("ERRORMSG") != null) {
+                System.out.println(connection.getHeaderField("ERRORMSG"));
+      	    } else if (connection.getHeaderField("filename") != null) {
+                getFile(connection);
+            }
     	} catch (Exception ex) {
-      		ex.printStackTrace();
-      		System.out.println("The report you requested is not available at this time.  Please try again in a few minutes.");
-    	} finally {
-      		if (connection != null) {
-        		connection.disconnect();
-        		connection = null;
-      		}
-    	}
+      	    ex.printStackTrace();
+            System.out.println("The report you requested is not available at this time.  Please try again in a few minutes.");
+        } finally {
+      	    if (connection != null) {
+                connection.disconnect();
+                connection = null;
+      	    }
+        }
     }
 
     /**
@@ -98,21 +98,21 @@ public class Autoingestion
      *
      * (Note: The argument was HttpsURLConnection in decompiled code)
      */
-	private static void getFile(HttpURLConnection connection) throws IOException {
-    	String filename = connection.getHeaderField("filename");
-    	System.out.println(filename);
+    private static void getFile(HttpURLConnection connection) throws IOException {
+        String filename = connection.getHeaderField("filename");
+        System.out.println(filename);
 
-    	BufferedInputStream in = new BufferedInputStream(connection.getInputStream());
-    	BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(filename));
+        BufferedInputStream in = new BufferedInputStream(connection.getInputStream());
+        BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(filename));
 
-    	int i = 0;
-    	byte[] data = new byte[1024];
+        int i = 0;
+        byte[] data = new byte[1024];
     	while ((i = in.read(data)) != -1) {
-      		out.write(data, 0, i);
-    	}
+            out.write(data, 0, i);
+        }
 
-    	in.close();
-    	out.close();
-    	System.out.println("File Downloaded Successfully ");
-  	}
+        in.close();
+        out.close();
+        System.out.println("File Downloaded Successfully ");
+    }
 }
