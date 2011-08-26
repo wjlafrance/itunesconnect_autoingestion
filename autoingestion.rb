@@ -63,18 +63,6 @@ class Autoingestion
     data += "REPORTDATE="   + CGI.escape(@report_date.to_s)
   end
 
-  def create_post_hash
-    {
-      'USERNAME'     => CGI.escape(@username.to_s),
-      'PASSWORD'     => CGI.escape(@password.to_s),
-      'VNDNUMBER'    => CGI.escape(@vendor_number.to_s),
-      'TYPEOFREPORT' => CGI.escape(@type_of_report.to_s),
-      'DATETYPE'     => CGI.escape(@date_type.to_s),
-      'REPORTTYPE'   => CGI.escape(@report_type.to_s),
-      'REPORTDATE'   => CGI.escape(@report_date.to_s)
-    }
-  end
-
   def perform_request
     uri = URI.parse(ITUNES_URL)
     
